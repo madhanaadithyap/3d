@@ -1,0 +1,23 @@
+
+  *{ font-family:  monospace; user-select: none; color: white; }
+  body{ margin:0; overflow:hidden; background:#000; }
+  #ui { position:fixed; left:10px; top:10px; z-index:999; display:flex; gap:10px; align-items:center }
+  #score {
+     font-size:2rem; font-weight:900; 
+     position: fixed;
+     top:10%;
+     right:10%;
+     transform: translate(-50%,-50%);
+     z-index: o;
+    }
+  #music-toggle { padding:8px 10px; background:#111; border:1px solid #fff; cursor:pointer; }
+  #popup { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:998; background:rgba(0,0,0,0.85); flex-direction:column; gap:12px; font-size:18px}
+  #loader { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1000; background:black; font-size:28px }
+  #over { position:fixed; inset:0; opacity: 0; display: flex;width: 100vw;height: 0vh;transition: 0.5s; align-items:center; justify-content:center; flex-direction:column; gap:16px; z-index:1001; background:rgba(0,0,0,1) }
+  #over a{ background:red; color:black; padding:10px 16px; text-decoration:none; font-weight:900; border:1px solid #fff }
+  #joystick-container { position:fixed; right:20px; bottom:20px; width:120px; height:120px; z-index:997 }
+  #wave { position:fixed; top:0; left:0; right:0; text-align:center; background:red; color:black; padding:6px; font-weight:900; z-index:996 }
+.inst{
+  width:100vw;
+  text-align: center;
+}

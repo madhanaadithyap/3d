@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Madhan Aadithya</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="inst" class="inst"><h1>Press space or swipe up to initialise</h1></div>
+  <div id="ui">
+    <div id="score">Score: 0</div>
+    <button id="music-toggle">🔊 Music: ON</button>
+  </div>
+  <div id="loader">Loading...</div>
+
+  <div id="popup">
+    <h1>How to Play</h1>
+    <div>Swipe left/right or use ← → keys or joystick to change lanes</div>
+    <div>Space / tap to jump — avoid obstacles and collect coins</div>
+    <button id="start-btn" style="padding:10px 16px;color:black;background:#fff;border:0">Start Game</button>
+  </div>
+
+  <div id="over">
+    <h1>GAME OVER</h1>
+    <div id="final-score" style="font-size:20px"></div>
+    <a id="restart-btn" onclick="location.reload()" >RESTART</a>
+  </div>
+
+  <div id="joystick-container"></div>
+
+  <audio id="bg-music" loop>
+    <source src="audio.mp3" type="audio/mp3">
+  </audio>
+
+
+  <script src="three.min.js"></script>
+    <script src="GLTFLoader.js"></script>
+  <script src="script.js"></script>
+
+
+</body>
+</html>
