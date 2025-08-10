@@ -4,12 +4,15 @@
   #ui { position:fixed; left:10px; top:10px; z-index:900; display:flex; gap:10px; align-items:center }
 
   #score {
-     font-size:2rem; font-weight:900; 
+     font-size:2vw; font-weight:900; 
      position: fixed;
      top:10%;
      right:10%;
      transform: translate(-50%,-50%);
      z-index: o;
+    }
+    #final-score{
+      font-size: 2vw;
     }
     #logo{
       width: 100px;
@@ -57,20 +60,20 @@ z-index: 899;   }
     height: 100vh;
     
      z-index:998; 
-    background:#38b6ff; flex-direction:column; gap:12px; font-size:18px}
+    background:#38b6ff; flex-direction:column; gap:12px; font-size: 2vw;}
   #loader { position:fixed; inset:0; display:flex; width: 100vw;
     height: 100vh;transition: 1s;flex-direction: column;
 
     align-items:center; justify-content:center; z-index:1000; background:#38b6ff; font-size:8vw }
-  #over { font-size: 2rem;position:fixed; inset:0; opacity: 0; display: flex;width: 100vw;height: 0vh;transition: 1s; align-items:center; justify-content:center; flex-direction:column; gap:16px; z-index:1001; background:#FF8138 }
-  #over a{ background:#FF8138; color:darkred; border-radius: 10px;border: 2px solid darkred; font-size: 2rem;padding:10px 16px; text-decoration:none; font-weight:900; }
+  #over { font-size: 2vw;position:fixed; inset:0; opacity: 0; display: flex;width: 100vw;height: 0vh;transition: 1s; align-items:center; justify-content:center; flex-direction:column; gap:16px; z-index:1001; background:#FF8138 }
+  #over a{ background:#FF8138; color:darkred; border-radius: 10px;border: 2px solid darkred; font-size: 2vw;padding:10px 16px; text-decoration:none; font-weight:900; }
  #over a:hover{
   background-color: darkred;
   transition: .5s;
   color: #FF8138;
   cursor: pointer;
  }
-   #start-btn{ background:#38b6ff; color:white; border-radius: 10px;border: 2px solid white; font-size: 2rem;padding:10px 16px; text-decoration:none; font-weight:900; }
+   #start-btn{ background:#38b6ff; color:white; border-radius: 10px;border: 2px solid white; font-size: 2vw;padding:10px 16px; text-decoration:none; font-weight:900; }
  #start-btn:hover{
   background-color: white;
   transition: .5s;
@@ -78,9 +81,67 @@ z-index: 899;   }
   cursor: pointer;
  }
 
+.character{
+  width: 100vw;
+  height:100vh;
+  padding:20px;
+  font-size: 2vw;
+  top:0px;
+  position: absolute;
+  top:0;
+  left: 0;
+}
+#character-select{
+  border: none;
+  background-color: #FF8138;
+  font-size: 2vw;
+  color: #fff;
+  text-decoration: 2px 2px #000;
+  user-select: none;
+  padding: 10px;
+  font-size: 2vw;
+}
+select{
+  border: none;
+  outline: none;
+   text-decoration: 2px 2px #000;
+}
+#character-select option{
+  color: #fff;
+  border: none;
+   text-decoration: 2px 2px #000;
+  background-color: #FF8138;
+}
+.credits{
+  text-decoration: none;
+  user-select: none;
+  cursor: pointer;
+  color: #38b6ff;
+  background-color: #FF8138;
+position: fixed;
+bottom:0%;
+left:5%;
+transform: translate(-50%,-50%);  
+padding: 5px 10px;
+font-size: 10px;
+}
  @media only screen and (max-width: 1000px) {
   #popup h1{
     font-size: 5vw;
     width: 95vw;
   }
+  #start-btn{
+    font-size: 5vw;
+  }#over a{
+    font-size: 5vw;
+  }
+  #final-score{
+      font-size: 5vw;
+    }
+    #score{
+      font-size: 5vw;
+    }
+    .character,#character-select{
+      font-size: 5vw;
+    }
 }

@@ -1,38 +1,45 @@
 const coinSound = document.getElementById('coin-sound');
 const overSound=document.getElementById('over-sound');
-/* ========== Game parameters ========== */
-const LANES = [-2.2, 0, 2.2]; // x positions
-let currentLane = 1; // index into LANES (start center)
+
+const LANES = [-2.2, 0, 2.2]; 
+let currentLane = 1; 
 let targetLane = currentLane;
 let animating;
 let laneTweenSpeed = 0.25;
 let jumpVelocity = 0;
 let isJumping = false;
-const gravity = -0.02;
+const gravity = -0.04;
 let gameRunning = false;
 let mixer;
 let stars;
-
+let camTransition = 0; 
+let camTransSpeed = 0.5; 
+let camSwitching = true; 
+let camGameOver = false;
 let starSizes = [];
 let score = 0;
 let lastColorChangeScore = 0;
-let speed = 0.6; // obstacle forward speed
+let speed = 0.6; 
 let spawnTimer = 0;
-let spawnInterval = 100; // frames
+let spawnInterval = 100;
 let obstacles = [];
 let coins = [];
-let wave = 1;
-let enemiesPerWave = 10;
 
-/* ========== Three.js scene setup ========== */
 let scene, camera, renderer;
-let player; // will be GLTF or fallback mesh
+let player;
 let loaderGLTF = new THREE.GLTFLoader();
 let clock = new THREE.Clock();
-let growAmount = 1.0;
-let growDirection = 1;
+let isPaused = false;
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'KeyP') {
+    isPaused = !isPaused;
+    if (mixer) mixer.timeScale = isPaused ? 0 : 1; 
+  }
+});
+
 initScene();
-loadPlayer();
+
 
 animate();
 
@@ -105,7 +112,7 @@ function initScene(){
   animating=true;
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xffffff, 0.05, 2000);
-  scene.background = new THREE.Color(0x38b6ff); // sky blue color
+  scene.background = new THREE.Color(0x38b6ff); 
 
   camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
   camera.position.set(0, 4.2, 8);
@@ -115,47 +122,47 @@ function initScene(){
   renderer.setSize(innerWidth, innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
   renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap; // optional for smoother shadows
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 
   document.body.appendChild(renderer.domElement);
 
-  // Lights
+  
   const dir = new THREE.DirectionalLight(0xffffff, 1.0);
   dir.position.set(5,10,5);
   dir.castShadow = true;
 
 dir.shadow.camera.near = 0;
-dir.shadow.camera.far = 10000;   // Increase to cover farther distance
+dir.shadow.camera.far = 10000;   
 
-dir.shadow.camera.left = -100;   // widen shadow camera left bound
-dir.shadow.camera.right = 100;   // widen right bound
-dir.shadow.camera.top = 100;     // widen top bound
-dir.shadow.camera.bottom = -100; // widen bott
+dir.shadow.camera.left = -100;   
+dir.shadow.camera.right = 100;   
+dir.shadow.camera.top = 100;     
+dir.shadow.camera.bottom = -100; 
   scene.add(dir);
   scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 
-  // Ground plane strip for visual movement
+  
   const groundGeo = new THREE.PlaneGeometry(10, 2000, 1, 1);
   const groundMat = new THREE.MeshStandardMaterial({ color: 0x111111, });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI/2;
-  ground.position.y = 0;
+  ground.position.y = 1;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Decorative lanes lines
+  
   for (let i=-1; i<=1; i++){
     const lineGeo = new THREE.BoxGeometry(0.12, 0.01, 2000);
     const lineMat = new THREE.MeshBasicMaterial({ color: 0x948ACC });
     const line = new THREE.Mesh(lineGeo, lineMat);
     line.position.x = LANES[i+1];
-    line.position.y = 0;
+    line.position.y = 1;
     line.position.z = -900;
     scene.add(line);
   }
 for (let j=-5; j<=5; j++){
     const lineGeo = new THREE.BoxGeometry(0.12, 0.01, 2000);
-    const lineMat = new THREE.MeshBasicMaterial({ color: 0x948ACC });
+    const lineMat = new THREE.MeshBasicMaterial({ color: 0xFF8138 });
     const line2 = new THREE.Mesh(lineGeo, lineMat);
     line2.position.x = [-5.5,0,5.5][j];
     line2.position.y = 10;
@@ -163,7 +170,7 @@ for (let j=-5; j<=5; j++){
     scene.add(line2);
   }
 
-  // star sky
+  
    const starCount = 1000;
   const starsGeometry = new THREE.BufferGeometry();
   const positions = [];
@@ -175,7 +182,7 @@ for (let j=-5; j<=5; j++){
       Math.random() * 50 + 5,
       (Math.random() - 0.5) * 600
     );
-    starSizes.push(Math.random() * 1.5 + 0.5); // initial size per star
+    starSizes.push(Math.random() * 1.5 + 0.5); 
   }
 
   starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -191,7 +198,7 @@ for (let j=-5; j<=5; j++){
       uniform float time;
       varying float vSize;
       void main() {
-        // Animate size with a sine wave + random offset (using position.x as phase)
+        
         float animSize = size + 0.5 * sin(time + position.x * 10.0);
         vSize = animSize;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -219,31 +226,47 @@ for (let j=-5; j<=5; j++){
     renderer.setSize(innerWidth, innerHeight);
   });
 }
+let selectedCharacter = './naruto.glb'; // default character
 
+// Get character select dropdown
+const characterSelect = document.getElementById('character-select');
+characterSelect.addEventListener('change', (e) => {
+  selectedCharacter = e.target.value;
+});
+
+// Modify loadPlayer to use selectedCharacter
 function loadPlayer() {
-  // attempt to load Ghost.glb; fallback to simple ship/box
   loaderGLTF.load(
-    './runn.glb',
+    selectedCharacter,
     (gltf) => {
       player = gltf.scene;
-      player.scale.set(2,2,2);
+      if( selectedCharacter ==="./runn.glb"){
+player.scale.set(2.25, 2.25, 2.25);
+      }
+      if( selectedCharacter ==="./naruto.glb"){
+player.scale.set(0.75, 0.75, 0.75);
+      }
+      if( selectedCharacter ==="./Tom.glb"){
+player.scale.set(0.75, 0.75, 0.75);
+      }
+      
       player.castShadow = true;
-      player.rotation.y=Math.PI;
-      player.position.set(LANES[currentLane], 0, 0);
+      player.rotation.y = Math.PI;
+      player.position.set(LANES[currentLane], -100, 0);
       scene.add(player);
-       mixer = new THREE.AnimationMixer( player );
-       gltf.animations.forEach( ( clip ) => {
-            const action = mixer.clipAction( clip );
-            action.loop = THREE.LoopRepeat; // Or THREE.LoopOnce, THREE.LoopPingPong
-            action.play();
-        });
+      mixer = new THREE.AnimationMixer(player);
+      gltf.animations.forEach((clip) => {
+        const action = mixer.clipAction(clip);
+        action.loop = THREE.LoopRepeat;
+        action.play();
+      });
       afterLoad();
     },
     undefined,
     (err) => {
       console.warn('GLTF load failed, using fallback mesh', err);
-      const geom = new THREE.ConeGeometry(0.7,1.8,8);
-      const mat = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive:0x003333, metalness:0.3, roughness:0.2 });
+      const geom = new THREE.ConeGeometry(0.7, 1.8, 8);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x003333, metalness: 0.3, roughness: 0.2 });
       player = new THREE.Mesh(geom, mat);
       player.rotation.x = Math.PI;
       player.position.set(LANES[currentLane], 1, 0);
@@ -251,26 +274,55 @@ function loadPlayer() {
       afterLoad();
     }
   );
+}function transitionPlayerColorToRed(duration = 1000) {
+  if (!player) return;
+
+  const startColor = new THREE.Color();
+  const endColor = new THREE.Color(0xff0000);
+
+  
+  player.traverse((child) => {
+    if (child.isMesh && child.material) {
+      startColor.copy(child.material.color);
+    }
+  });
+
+  const startTime = performance.now();
+
+  function animateColor() {
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(elapsed / duration, 1); 
+
+    player.traverse((child) => {
+      if (child.isMesh && child.material) {
+        child.material.color.copy(startColor).lerp(endColor, t);
+      }
+    });
+
+    if (t < 1) requestAnimationFrame(animateColor);
+  }
+
+  animateColor();
 }
 
 function afterLoad(){
  setTimeout(()=> {
-  // if player hasn't loaded, hide loader after a short wait (we have fallback)
+  
   loaderEl.style.height = '0vh';
-  loaderEl.style.top='-250%'
+  loaderEl.style.top='-300%'
 }, 1000);
 
+
   
-  // place a simple camera follow anchor
+  
   camera.position.set(0,4,8);
   camera.lookAt(player.position.x, player.position.y+1, player.position.z-5);
 }
-
-/* ========== Game control functions ========== */
-function startGame(){
+function startGame() {
   popup.style.top = '-1000%';
-startBtn.style.display='none'
-
+  startBtn.style.display = 'none';
+  camTransition = 0;
+  camSwitching = true;
   gameRunning = true;
   score = 0;
   speed = 0.6;
@@ -278,20 +330,25 @@ startBtn.style.display='none'
   wave = 1;
   obstacles.length = 0;
   coins.length = 0;
-  if (musicOn) bgMusic.play().catch(()=>{});
-  // start the render loop if not already
+  if (musicOn) bgMusic.play().catch(() => {});
+  
+  loadPlayer(); // load chosen character
+
   if (!animating) { animating = true; animate(); }
 }
-
 function endGame(){
-
+  setTimeout(() => {
+    transitionPlayerColorToRed(1000); 
+  }, 500); 
+camGameOver = true; 
   gameRunning = false;
+   setTimeout(() => {
   overEl.style.height = '100vh';
    overEl.style.opacity = '1';
-  finalScoreEl.innerText = `Final Score: ${Math.round(score)}`;
+  finalScoreEl.innerText = `Final Score: ${Math.round(score)}`;},2500);
   bgMusic.pause();
   if (overSound) {
-      overSound.currentTime = 0; // rewind to start
+      overSound.currentTime = 0; 
       overSound.play().catch(() => {/* ignore play errors */});
     }
 }
@@ -313,9 +370,9 @@ function tryJump(){
 function spawnObstacle() {
   const laneIndex = Math.floor(Math.random() * LANES.length);
   const x = LANES[laneIndex];
-  const z = -220; // far ahead
+  const z = -220; 
 
-  // Randomly pick a geometry type
+  
   const geometryTypes = [
     () => new THREE.BoxGeometry(0.5, 0.5, 0.5),
     () => new THREE.SphereGeometry(0.3, 16, 16),
@@ -325,18 +382,18 @@ function spawnObstacle() {
 
   const geometry = geometryTypes[Math.floor(Math.random() * geometryTypes.length)]();
 
-  // Random scale multiplier
+  
   const scale = 0.5 + Math.random() * 1.0;
   geometry.scale(2.5, 2.5, 2.5);
 
-  // Random pastel color
+  
   const colorHue = Math.random();
   const color = new THREE.Color().setHSL(colorHue, 1, 0.5);
 
   const material = new THREE.MeshStandardMaterial({ color, metalness: 0.4, roughness: 0.6 });
 
   const obstacle = new THREE.Mesh(geometry, material);
-  obstacle.position.set(x, 0.5, z);
+  obstacle.position.set(x, 1.5, z);
   obstacle.userData = { type: 'obstacle', lane: laneIndex };
 obstacle.castShadow = true;
 obstacle.receiveShadow = true; 
@@ -353,7 +410,7 @@ function spawnCoin() {
   const m = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive:0x222200 });
   const coin = new THREE.Mesh(g,m);
   coin.rotation.x = Math.PI;
-  coin.position.set(x, 1.1, z);
+  coin.position.set(x, 1.5, z);
   coin.userData = { type:'coin' };
   coin.castShadow = true;
 coin.receiveShadow = true;
@@ -363,37 +420,37 @@ coin.receiveShadow = true;
 
 /* ========== Collision helpers ========== */
 function checkCollisions(){
-  // simple distance checks
+  
   const px = player.position.x;
   const py = player.position.y;
   const pz = player.position.z;
-  // obstacles
+  
   for (let i=obstacles.length-1;i>=0;i--){
     const o = obstacles[i];
     const dx = Math.abs(o.position.x - px);
     const dz = Math.abs(o.position.z - pz);
     const dy = Math.abs((o.position.y||0) - py);
     if (dz < 1.2 && dx < 0.9 && py < (o.position.y + 0.9)) {
-      // hit
-      // small flash
+      
+      
       endGame();
       return;
     }
   }
-  // coins
+  
   for (let i=coins.length-1;i>=0;i--){
     const c = coins[i];
     if (c.position.distanceTo(player.position) < 1.0) {
-      // collect
+      
       scene.remove(c);
       coins.splice(i,1);
 
       score += 50;
       updateScore();
-      // small boost when collecting
+      
       speed += 0.01;
       if (coinSound) {
-      coinSound.currentTime = 0; // rewind to start
+      coinSound.currentTime = 0; 
       coinSound.play().catch(() => {/* ignore play errors */});
     }
     }
@@ -412,7 +469,7 @@ function animate() {
   if (!animating) return;
   requestAnimationFrame(animate);
 
-  // delta / per-frame logic
+  
   const delta = clock.getDelta();
 
 
@@ -420,11 +477,11 @@ function animate() {
     stars.material.uniforms.time.value = performance.now() * 0.0002;
     stars.rotation.y += 0.00005;
   }
-  // Player lateral smoothing (lerp to target lane)
+  
   if (player) {
     const desiredX = LANES[targetLane];
     player.position.x += (desiredX - player.position.x) * laneTweenSpeed;
-    // Jump physics
+    
     if (isJumping) {
       player.position.y += jumpVelocity;
       jumpVelocity += gravity;
@@ -434,27 +491,27 @@ function animate() {
         jumpVelocity = 0;
       }
     }
-    // subtle bobbing when running
+    
     player.rotation.z = Math.sin(performance.now()/400) * 0.02;
   }
-  // spawn logic only if running
+  
   if (gameRunning) {
     spawnTimer++;
     if (spawnTimer % Math.max(10, Math.floor(spawnInterval / (speed+0.2))) === 0) {
-      // spawn some obstacles and coins
+      
       if (Math.random() < 0.7) spawnObstacle();
       if (Math.random() < 0.4) spawnCoin();
     }
 
-    // Move obstacles/coins towards player (increase z)
+    
     for (let i=obstacles.length-1;i>=0;i--){
       const o = obstacles[i];
-      o.position.z += speed * 2 * delta * 50; // normalized
-      // remove if passed
+      o.position.z += speed * 2 * delta * 50; 
+      
       if (o.position.z > 10) {
         scene.remove(o);
         obstacles.splice(i,1);
-        // small score for dodging
+        
         score += 2;
         updateScore();
       }
@@ -469,14 +526,14 @@ function animate() {
       }
     }
 
-    // incremental score over time (distance)
-    score += 0.02 * (speed); // per frame small increment
+    
+    score += 0.02 * (speed); 
     updateScore();
 
-    // Check collisions
+    
     checkCollisions();
 
-    // Wave progression: every X score bump speed + increase wave
+    
     if (score > wave * (500 + wave*50)) {
       wave++;
       enemiesPerWave += 5;
@@ -486,13 +543,33 @@ function animate() {
     }
   }
 
-  // camera follow smoothing
+  
   if (player) {
-    const camTarget = new THREE.Vector3(player.position.x, player.position.y+2.5, player.position.z + 8);
-    camera.position.lerp(camTarget, 0.08);
-    camera.lookAt(player.position.x, player.position.y+1, player.position.z - 4);
+  if (camGameOver) {
+    
+    const closeOffset = new THREE.Vector3(5, 0, -5); 
+    const desiredPos = player.position.clone().add(closeOffset);
+    camera.position.lerp(desiredPos, 0.005);
+    camera.lookAt(player.position.clone().add(new THREE.Vector3(0, 1.5, 0)));
+  } else {
+    
+    if (camSwitching) {
+      camTransition += camTransSpeed * delta;
+      if (camTransition >= 1) {
+        camTransition = 1;
+        camSwitching = false;
+      }
+    }
+    const frontOffset = new THREE.Vector3(5, 3, -8);
+    const thirdOffset = new THREE.Vector3(0, 3, 8);
+    const offset = new THREE.Vector3().lerpVectors(frontOffset, thirdOffset, camTransition);
+    const desiredPos = player.position.clone().add(offset);
+    camera.position.lerp(desiredPos, 0.1);
+    camera.lookAt(player.position.clone().add(new THREE.Vector3(0, 1.5, 0)));
   }
-if ( mixer ) {
+}
+
+if ( mixer &&gameRunning ) {
             mixer.update( delta );
         }
   renderer.render(scene, camera);
@@ -500,6 +577,7 @@ if ( mixer ) {
 
 /* ========== Utility: show loader hide after assets attempt ========== */
 setTimeout(()=> {
-  // if player hasn't loaded, hide loader after a short wait (we have fallback)
+  
   loaderEl.style.height = '0vh';
-}, 4500);
+  loaderEl.style.top="-300%"
+}, 2000);
