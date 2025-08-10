@@ -1,7 +1,8 @@
 
-  *{ font-family:  monospace; user-select: none; color: white; }
+  *{ font-family:  monospace; user-select: none; color: whitesmoke;transition: 1s; }
   body{ margin:0; overflow:hidden; background:#000; }
-  #ui { position:fixed; left:10px; top:10px; z-index:999; display:flex; gap:10px; align-items:center }
+  #ui { position:fixed; left:10px; top:10px; z-index:900; display:flex; gap:10px; align-items:center }
+
   #score {
      font-size:2rem; font-weight:900; 
      position: fixed;
@@ -10,14 +11,76 @@
      transform: translate(-50%,-50%);
      z-index: o;
     }
-  #music-toggle { padding:8px 10px; background:#111; border:1px solid #fff; cursor:pointer; }
-  #popup { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:998; background:rgba(0,0,0,0.85); flex-direction:column; gap:12px; font-size:18px}
-  #loader { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1000; background:black; font-size:28px }
-  #over { position:fixed; inset:0; opacity: 0; display: flex;width: 100vw;height: 0vh;transition: 0.5s; align-items:center; justify-content:center; flex-direction:column; gap:16px; z-index:1001; background:rgba(0,0,0,1) }
-  #over a{ background:red; color:black; padding:10px 16px; text-decoration:none; font-weight:900; border:1px solid #fff }
-  #joystick-container { position:fixed; right:20px; bottom:20px; width:120px; height:120px; z-index:997 }
-  #wave { position:fixed; top:0; left:0; right:0; text-align:center; background:red; color:black; padding:6px; font-weight:900; z-index:996 }
-.inst{
-  width:100vw;
+    #logo{
+      width: 100px;
+      position: absolute;
+      left:50%;
+      top:20%;
+  transform: translate(-50%,-50%); 
+z-index: 899;   }
+#popup{
+  line-height: 7.5vh;
+  color: #38b6ff;
+  text-shadow: 2px 2px 0px black;
+}
+#popup h1{
+  font-size: 2vw;
+  width:100vw
+}
+.text{
+  display: flex;
+  color: #38b6ff;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  justify-content: center;
+  height: 100vh;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%,10%);
+}
+  #watermark {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4); /* semi-transparent white */
+  pointer-events: none; /* so it doesn't block clicks */
+  user-select: none;    /* prevents text selection */
+  z-index: 9999;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.7); /* subtle neon glow */
+}
+
+  #music-toggle { padding:8px 10px; background:#FF8138;border: none; cursor:pointer; }
+  #popup { 
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    height: 100vh;
+    
+     z-index:998; 
+    background:#38b6ff; flex-direction:column; gap:12px; font-size:18px}
+  #loader { position:fixed; inset:0; display:flex; width: 100vw;
+    height: 100vh;transition: 1s;flex-direction: column;
+
+    align-items:center; justify-content:center; z-index:1000; background:#38b6ff; font-size:8vw }
+  #over { font-size: 2rem;position:fixed; inset:0; opacity: 0; display: flex;width: 100vw;height: 0vh;transition: 1s; align-items:center; justify-content:center; flex-direction:column; gap:16px; z-index:1001; background:#FF8138 }
+  #over a{ background:#FF8138; color:darkred; border-radius: 10px;border: 2px solid darkred; font-size: 2rem;padding:10px 16px; text-decoration:none; font-weight:900; }
+ #over a:hover{
+  background-color: darkred;
+  transition: .5s;
+  color: #FF8138;
+  cursor: pointer;
+ }
+   #start-btn{ background:#38b6ff; color:white; border-radius: 10px;border: 2px solid white; font-size: 2rem;padding:10px 16px; text-decoration:none; font-weight:900; }
+ #start-btn:hover{
+  background-color: white;
+  transition: .5s;
+  color: #38b6ff;
+  cursor: pointer;
+ }
+
+ @media only screen and (max-width: 1000px) {
+  #popup h1{
+    font-size: 5vw;
+    width: 95vw;
+  }
 }

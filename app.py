@@ -9,9 +9,9 @@ PORT = 8000  # You can choose a different port if 8000 is in use
 Handler = http.server.SimpleHTTPRequestHandler
 
 def start_server():
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Serving at port {PORT}")
-        print(f"Access your site at http://localhost:{PORT}")
+    with socketserver.TCPServer(("", 1111), Handler) as httpd:
+        print(f"Serving at port {1111}")
+        print(f"Access your site at http://localhost:{1111}")
         httpd.serve_forever()
 
 if __name__ == "__main__":
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     time.sleep(1)
 
     # Open the local site in the default web browser
-    webbrowser.open_new_tab(f"http://localhost:{PORT}")
+    webbrowser.open_new_tab(f"http://localhost:{1111}")
 
     # Keep the main thread alive so the server continues to run
     try:
