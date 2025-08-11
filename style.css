@@ -4,12 +4,12 @@
   #ui { position:fixed; left:10px; top:10px; z-index:900; display:flex; gap:10px; align-items:center }
 
   #score {
-     font-size:2vw; font-weight:900; 
+     font-size:2vw;
+      font-weight:900; 
      position: fixed;
      top:10%;
-     right:10%;
-     transform: translate(-50%,-50%);
-     z-index: o;
+    width: 100vw;
+    text-align: center;
     }
     #final-score{
       font-size: 2vw;
