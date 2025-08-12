@@ -40,7 +40,7 @@ z-index: 899;   }
   height: 100vh;
   position: absolute;
   left: 50%;
-  transform: translate(-50%,10%);
+  transform: translate(-50%,20%);
 }
   #watermark {
   position: fixed;
