@@ -155,7 +155,7 @@ dir.shadow.camera.bottom = -100;
 
   
   const groundGeo = new THREE.PlaneGeometry(10, 2000, 1, 1);
-  const groundMat =  new THREE.MeshStandardMaterial({ color: 0x800080, roughness: 1,metalness:1,});
+  const groundMat =  new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1,metalness:1,});
 
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI/2;
