@@ -1,65 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>5K RUN</title>
-  <link rel="shortcut icon" href="icon.png" type="image/png">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div id="watermark">Made by Madhan Aadithya</div>
-  <div id="ui">
-    <div id="score">Score: 0</div>
-    <a id="music-toggle">🔊 Music: ON</a>
-  </div>
-  <div id="loader">
-    <h1>Loading...</h1></div>
-
-  <div id="popup">
-    <div class="character">
-    <label for="character-select">Choose Character:</label>
-<select id="character-select">
-  <option value="./naruto.glb">Naruto</option>
-  <option value="./inc.glb">Mr.Incredible</option>
-  <option value="./hl.glb">Honey Lemon</option>
-  <option value="./cin.glb">Cinderella</option>
-</select>
-</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5K RUN</title>
+    <link rel="shortcut icon" href="icon.png" type="image/png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     
-    <div class="text">
-    <h1></h1>
-    <h1>Swipe left/right or use ← → keys to change lanes</h1>
-    <h1>Press Space / Swipe Up to jump — avoid obstacles and collect coins</h1>
-    <h1>Reach 5000 points to complete the game</h1>
-    <button id="start-btn" >Start Game</button></div>
-  </div>
-  <a class="credits" href="credits.html">Credits</a>
-  
+    <img id="logo" src="icon.png">
+    
+    <div id="watermark">Made by Madhan Aadithya</div>
+    <div id="ui">
+      <div id="score">Score: 0</div>
+      <a id="music-toggle">🔊 Music: ON</a>
+    </div>
+    <div id="loader">
+      <h1>Loading...</h1>
+    </div>
+    <div class="coin-spark"></div>
 
-  <div id="over">
-    <h1 id="overText">GAME OVER</h1>
-    <div id="final-score" ></div>
-    <a id="restart" onclick="location.reload()" >RESTART</a>
-  </div>
-<audio id="coin-sound" src="coin.mp3" preload="auto"></audio>
-<audio id="over-sound" src="gameover.mp3" preload="auto"></audio>
- 
-  <audio id="bg-music" loop>
-    <source src="audio.mp3" type="audio/mp3">
-  </audio>
+    <div id="popup">
+      <div class="text">
+        <div class="character">
+          <label for="character-select">Choose Character:</label>
+          <select id="character-select">
+            <option value="./naruto.glb">Naruto</option>
+            <option value="./runn.glb">Girl</option>
+            <option value="./inc.glb">Mr.Incredible</option>
+            <option value="./cin.glb">Cinderella</option>
+          </select>
+        </div>
 
+        <h1>Swipe left/right or use ← → keys to change lanes</h1>
+        <h1>
+          Press Space or / Swipe Up to jump — avoid obstacles and collect coins
+        </h1>
+        <h1>Reach 5000 points to complete the game</h1>
+        <button id="start-btn">Start Game</button>
+      </div>
+    </div>
+    <a class="credits" href="credits.html">Credits</a>
 
-  <script src="three.min.js"></script>
+    <div id="over">
+      <h1 id="overText">GAME OVER</h1>
+      <div id="final-score"></div>
+      <a id="restart" onclick="location.reload()">RESTART</a>
+    </div>
+    <audio id="coin-sound" src="coin.mp3" preload="auto"></audio>
+    <audio id="over-sound" src="gameover.mp3" preload="auto"></audio>
+
+    <audio id="bg-music" loop>
+      <source src="audio.mp3" type="audio/mp3" />
+    </audio>
+
+    <script src="three.min.js"></script>
     <script src="GLTFLoader.js"></script>
-  <script src="script.js"></script>
-<script>
-// When the user clicks on <div>, open the popup
-function myFunction() {
-  var popup = document.getElementById("myPopup");
-  popup.classList.toggle("show");
-}
-</script>
+    <script src="script.js"></script>
 
-</body>
+  </body>
 </html>
